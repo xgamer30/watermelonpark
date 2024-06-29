@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-	<meta http-equiv="Pragma" content="no-cache">
-	<meta http-equiv="Expires" content="0">
-    <title>Self-updating Page</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Redirecting</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -21,6 +21,7 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
+            flex-direction: column;
         }
 
         .redirecting {
@@ -33,7 +34,7 @@
         .redirecting span {
             display: inline-block;
             opacity: 0;
-            animation: fadeIn 1s forwards;
+            animation: fadeIn 1s forwards, float 3s ease-in-out infinite;
         }
 
         .redirecting span:nth-child(odd) {
@@ -80,6 +81,14 @@
         const redirectUrl = "https://discord.gg/vantacheatsisracist";
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Update the page title with animated dots
+            const titleBase = "Redirecting";
+            let dotCount = 0;
+            setInterval(() => {
+                dotCount = (dotCount + 1) % 4; // Cycle through 0, 1, 2, 3
+                document.title = titleBase + '.'.repeat(dotCount);
+            }, 500);
+
             // Fetch the latest version of this HTML file
             fetch(window.location.href, { cache: "no-store" })
                 .then(response => {

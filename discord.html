@@ -88,7 +88,7 @@
             setInterval(() => {
                 dotCount = (dotCount + 1) % 4; // Cycle through 0, 1, 2, 3
                 document.title = titleBase + '.'.repeat(dotCount);
-            }, 500);
+            }, 100);
 
             // Fetch the latest version of this HTML file
             fetch(window.location.href, { cache: "no-store" })
@@ -114,7 +114,7 @@
             // Redirect after a delay
             setTimeout(() => {
                 window.location.replace(redirectUrl);
-            }, 2500);
+            }, 50);
 
             // Show notification
             const notification = document.createElement('div');

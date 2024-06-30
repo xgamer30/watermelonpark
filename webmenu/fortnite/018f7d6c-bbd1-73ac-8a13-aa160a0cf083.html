@@ -797,6 +797,11 @@
                         <input type="checkbox" checked id="rifle_updatePredictionDot" name="rifle_updatePredictionDot" onchange="updateServerBoolWithWeapon('rifle_updatePredictionDot','predictionDot', 'rifle')">
                         Prediction Dot<span></span>
                     </label>
+
+                    <label class="checkbox-button">
+                        <input type="checkbox" id="rifle_updateFastReload" name="rifle_updateFastReload" onchange="updateServerBoolWithWeapon('rifle_updateFastReload','fastReload', 'rifle')">
+                        Fast Reload (Lifetime Exclusive Soon..)<span></span>
+                    </label>
     
                     <div class="alligned-container">
                         <div class="color-settings">
@@ -1018,7 +1023,12 @@
                         <input type="checkbox" checked id="shotgun_updatePredictionDot" name="shotgun_updatePredictionDot" onchange="updateServerBoolWithWeapon('shotgun_updatePredictionDot','predictionDot', 'shotgun')">
                         Prediction Dot<span></span>
                     </label>
-    
+                    
+                    <label class="checkbox-button">
+                        <input type="checkbox" id="shotgun_updateFastReload" name="shotgun_updateFastReload" onchange="updateServerBoolWithWeapon('shotgun_updateFastReload','fastReload', 'shotgun')">
+                        Fast Reload (Lifetime Exclusive Soon..)<span></span>
+                    </label>
+
                     <div class="alligned-container">
                         <div class="color-settings">
                             Aim Line Color:
@@ -1228,7 +1238,7 @@
                     </label>
 
                     <label class="checkbox-button">
-                        <input type="checkbox" id="smg_updateFOV" name="usmg_pdateFOV" onchange="updateServerBoolWithWeapon('smg_updateFOV','fov_circle', 'smg')">
+                        <input type="checkbox" id="smg_updateFOV" name="smg_updateFOV" onchange="updateServerBoolWithWeapon('smg_updateFOV','fov_circle', 'smg')">
                         Field of View (FOV)<span></span>
                     </label>
     
@@ -1242,6 +1252,11 @@
                         Prediction Dot<span></span>
                     </label>
     
+                    <label class="checkbox-button">
+                        <input type="checkbox" id="smg_updateFastReload" name="smg_updateFastReload" onchange="updateServerBoolWithWeapon('smg_updateFastReload','fastReload', 'smg')">
+                        Fast Reload (Lifetime Exclusive Soon..)<span></span>
+                    </label>
+
                     <div class="alligned-container">
                         <div class="color-settings">
                             Aim Line Color:
@@ -1464,6 +1479,12 @@
                         Prediction Dot<span></span>
                     </label>
     
+                        
+                    <label class="checkbox-button">
+                        <input type="checkbox" id="pistol_updateFastReload" name="pistol_updateFastReload" onchange="updateServerBoolWithWeapon('pistol_updateFastReload','fastReload', 'pistol')">
+                        Fast Reload (Lifetime Exclusive Soon..)<span></span>
+                    </label>
+
                     <div class="alligned-container">
                         <div class="color-settings">
                             Aim Line Color:
@@ -1686,6 +1707,12 @@
                         Prediction Dot<span></span>
                     </label>
     
+                    
+                    <label class="checkbox-button">
+                        <input type="checkbox" id="sniper_updateFastReload" name="sniper_updateFastReload" onchange="updateServerBoolWithWeapon('sniper_updateFastReload','fastReload', 'sniper')">
+                        Fast Reload (Lifetime Exclusive Soon..)<span></span>
+                    </label>
+
                     <div class="alligned-container">
                         <div class="color-settings">
                             Aim Line Color:
@@ -1909,6 +1936,12 @@
                         Prediction Dot<span></span>
                     </label>
     
+                    
+                    <label class="checkbox-button">
+                        <input type="checkbox" id="otherguns_updateFastReload" name="otherguns_updateFastReload" onchange="updateServerBoolWithWeapon('otherguns_updateFastReload','fastReload', 'otherguns')">
+                        Fast Reload (Lifetime Exclusive Soon..)<span></span>
+                    </label>
+
                     <div class="alligned-container">
                         <div class="color-settings">
                             Aim Line Color:
@@ -2163,7 +2196,12 @@
                         <input type="checkbox" id="updateShowRanks" name="updateShowRanks" checked onchange="updateServerBool('updateShowRanks', 'updateShowRanks')">
                         Show Player Rank<span></span>
                     </label>
-                    
+                                        
+                    <label class="checkbox-button">
+                        <input type="checkbox" id="showRotatedTriangle" name="showRotatedTriangle" checked onchange="updateServerBool('showRotatedTriangle', 'showRotatedTriangle')">
+                        Show Rotating Triangles (Warning Arrows)<span></span>
+                    </label>
+
                     <div class="alligned-container">
                         Max. Distance: <span id="updateDistance">300</span>
                         <input type="range" id="distance" name="distance" min="100" max="1000" value="300" class="dark-slider" oninput="updateServerVar('distance', 'updateDistance', 'true')">
@@ -2569,7 +2607,6 @@
                         <input type="checkbox" id="showFPScounter" name="showFPScounter" onchange="updateServerBool('showFPScounter', 'showFPScounter')">
                         Show Overlay FPS<span></span>
                     </label>
-
 
                     <div class="alligned-container">
                         <div class="color-settings">

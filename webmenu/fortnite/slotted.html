@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .category {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        nav li {
+            float: left;
+        }
+
+        nav li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        nav li a:hover {
+            background-color: #111;
+        }
+
+        /* Toggle Switch Style */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            /* Adjust width as needed */
+            height: 20px;
+            /* Adjust height as needed */
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .2s;
+            border-radius: 20px;
+            /* Adjust border-radius to make it round */
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            /* Adjust height of the slider */
+            width: 16px;
+            /* Adjust width of the slider */
+            left: 4px;
+            /* Adjust left position */
+            bottom: 2px;
+            /* Adjust bottom position */
+            background-color: white;
+            transition: .2s;
+            border-radius: 50%;
+        }
+
+        input:checked+.toggle-slider {
+            background-color: #2196F3;
+        }
+
+        input:focus+.toggle-slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(16px);
+            /* Adjust distance when checked */
+        }
+
+        /* Rounded sliders */
+        .toggle-slider.round {
+            border-radius: 20px;
+            /* Adjust border-radius to make it round */
+        }
+
+        .toggle-slider.round:before {
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+
+<body>
+    <nav>
+        <ul>
+            <li><a onclick="showCategory('aimbot')">Aimbot</a></li>
+            <li><a onclick="showCategory('visual')">visual</a></li>
+            <li><a onclick="showCategory('exploit')">Exploit</a></li>
+        </ul>
+    </nav>
+
+    <!--Aimbot-->
+    <div id="aimbot" class="category active">
+        <label for="toggle">Toggle:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="toggle" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+
+        <label for="smoothness">Smoothness:</label>
+        <input type="range" id="smoothnessSlider" min="5" max="20" step="0.1"
+            onchange="updateSliderValue('smoothnessSlider', 'smoothness')">
+        <input type="number" id="smoothness" min="5" max="20" step="0.1"
+            onchange="updateSliderValue('smoothness', 'smoothnessSlider')">
+        <br>
+
+
+        <label for="fieldOfView">Field Of View:</label>
+        <input type="range" id="fieldOfViewSlider" min="0" max="1000" step="1"
+            onchange="updateSliderValue('fieldOfViewSlider', 'fieldOfView')">
+        <input type="number" id="fieldOfView" min="0" max="1000" step="1"
+            onchange="updateSliderValue('fieldOfView', 'fieldOfViewSlider')">
+        <br>
+
+        <label for="drawFieldOfView">Draw Field Of View:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="drawFieldOfView" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="showPredictionDot">Show Prediction Dot:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="showPredictionDot" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="enablePrediction">Enable Prediction:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="enablePrediction" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="humanization">Humanization:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="humanization" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="ignoreKnocked">Ignore Knocked:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="ignoreKnocked" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="ignoreBots">Ignore Bots:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="ignoreBots" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="visibleOnly">Visible Only:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="visibleOnly" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="keybind">Keybind:</label>
+        <input type="number" id="keybind" onchange="updateJSON()">
+        <br>
+
+        <label for="maxDistance">Max Distance:</label>
+        <input type="range" id="maxDistanceSlider" min="0" max="600" step="1"
+            onchange="updateSliderValue('maxDistanceSlider', 'maxDistance')">
+        <input type="number" id="maxDistance" min="0" max="600" step="1"
+            onchange="updateSliderValue('maxDistance', 'maxDistanceSlider')">
+        <br>
+
+        <label for="triggerbot">Triggerbot:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="triggerbot" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="triggerKeybind">Trigger Keybind:</label>
+        <input type="number" id="triggerKeybind" onchange="updateJSON()">
+        <br>
+
+    </div>
+
+    <!--Exploits-->
+    <div id="exploit" class="category">
+        <label for="exploitHitscan">Hitscan:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="exploitHitscan" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+        <label for="magic">Magic:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="magic" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+    </div>
+
+    <!--visual-->
+    <div id="visual" class="category">
+        <label for="showVisible">Show Visible:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="showVisible" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="showNotVisible">Show Not Visible:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="showNotVisible" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="showKnocked">Show Knocked:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="showKnocked" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="showTeammates">Show Teammates:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="showTeammates" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="showIfAiming">Show If Aiming:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="showIfAiming" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+        <label for="playerDistance">Player Distance:</label>
+        <input type="range" id="playerDistanceSlider" min="0" max="1000" step="1"
+            onchange="updateSliderValue('playerDistanceSlider', 'playerDistance')">
+        <input type="number" id="playerDistance" min="0" max="1000" step="1"
+            onchange="updateSliderValue('playerDistance', 'playerDistanceSlider')">
+        <br>
+
+        <!--Chest-->
+        <label for="showChests">Show Chests:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="showChests" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+        <label for="chestDistance">Chest Distance:</label>
+        <input type="range" id="chestDistanceSlider" min="0" max="200" step="1"
+            onchange="updateSliderValue('chestDistanceSlider', 'chestDistance')">
+        <input type="number" id="chestDistance" min="0" max="200" step="1"
+            onchange="updateSliderValue('chestDistance', 'chestDistanceSlider')">
+        <br>
+
+
+        <!--Items-->
+        <label for="showItems">Show Items:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="showItems" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+        <label for="itemDistance">Item Distance:</label>
+        <input type="range" id="itemDistanceSlider" min="0" max="200" step="1"
+            onchange="updateSliderValue('itemDistanceSlider', 'itemDistance')">
+        <input type="number" id="itemDistance" min="0" max="200" step="1"
+            onchange="updateSliderValue('itemDistance', 'itemDistanceSlider')">
+        <br>
+
+        <label for="drawPlayerType">Draw Player Type:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="drawPlayerType" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+
+        <label for="showCrosshair">Show Crosshair:</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="showCrosshair" onchange="updateJSON()">
+            <span class="toggle-slider"></span>
+        </label>
+        <br>
+
+
+    </div>
+
+
+    <script>
+        function showCategory(category) {
+            var categories = document.getElementsByClassName('category');
+            for (var i = 0; i < categories.length; i++) {
+                categories[i].classList.remove('active');
+            }
+            document.getElementById(category).classList.add('active');
+            updateJSON();
+        }
+        function updateSliderValue(inputId, sliderId) {
+            var inputValue = document.getElementById(inputId).value;
+            document.getElementById(sliderId).value = inputValue;
+            updateJSON();
+        }
+        function updateJSON() {
+            var aimbotData = {
+                "drawFieldOfView": document.getElementById("drawFieldOfView").checked,
+                "enablePrediction": document.getElementById("enablePrediction").checked,
+                "fieldOfView": parseFloat(document.getElementById("fieldOfView").value),
+                "humanization": document.getElementById("humanization").checked,
+                "ignoreBots": document.getElementById("ignoreBots").checked,
+                "ignoreKnocked": document.getElementById("ignoreKnocked").checked,
+                "keybind": parseInt(document.getElementById("keybind").value),
+                "magic": document.getElementById("magic").checked,
+                "maxDistance": parseFloat(document.getElementById("maxDistance").value),
+                "showPredictionDot": document.getElementById("showPredictionDot").checked,
+                "smoothness": parseFloat(document.getElementById("smoothness").value),
+                "toggle": document.getElementById("toggle").checked,
+                "triggerKeybind": parseInt(document.getElementById("triggerKeybind").value),
+                "triggerbot": document.getElementById("triggerbot").checked,
+                "visibleOnly": document.getElementById("visibleOnly").checked
+            };
+            var exploitData = {
+                "hitscan": document.getElementById("exploitHitscan").checked
+            };
+            var visualData = {
+                "chestDistance": parseFloat(document.getElementById("chestDistance").value),
+                "drawPlayerType": document.getElementById("drawPlayerType").checked,
+                "itemDistance": parseFloat(document.getElementById("itemDistance").value),
+                "playerDistance": parseFloat(document.getElementById("playerDistance").value),
+                "showChests": document.getElementById("showChests").checked,
+                "showCrosshair": document.getElementById("showCrosshair").checked,
+                "showIfAiming": document.getElementById("showIfAiming").checked,
+                "showItems": document.getElementById("showItems").checked,
+                "showKnocked": document.getElementById("showKnocked").checked,
+                "showNotVisible": document.getElementById("showNotVisible").checked,
+                "showTeammates": document.getElementById("showTeammates").checked,
+                "showVisible": document.getElementById("showVisible").checked
+            };
+
+            var jsonData = {
+                "aimbot": aimbotData,
+                "exploit": exploitData,
+                "visual": visualData
+            };
+            SaveConfig(jsonData);
+            //document.getElementById("jsonOutput").innerText = JSON.stringify(jsonData, null, 2);
+        }
+        function SaveConfig(jsonData) {
+            var url = window.location.href + '/set';
+
+            // Options for the fetch request
+            var requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData, null, 2)
+            };
+
+            fetch(url, requestOptions)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success :', data);
+                })
+                .catch(error => {
+                    console.log('jsonData :', jsonData);
+                    console.error('There was a problem with the POST request:', error);
+                });
+
+        }
+
+        // Populate input fields with initial JSON data
+        window.onload = function () {
+            var initialData = {
+                "aimbot": {
+                    "drawFieldOfView": true,
+                    "enablePrediction": true,
+                    "fieldOfView": 500.0,
+                    "humanization": true,
+                    "ignoreBots": false,
+                    "ignoreKnocked": true,
+                    "keybind": 6,
+                    "magic": true,
+                    "maxDistance": 700.0,
+                    "showPredictionDot": true,
+                    "smoothness": 4.0,
+                    "toggle": true,
+                    "triggerKeybind": 20,
+                    "triggerbot": true,
+                    "visibleOnly": false
+                },
+                "exploit": {
+                    "hitscan": false
+                },
+                "visual": {
+                    "chestDistance": 150.0,
+                    "drawPlayerType": true,
+                    "itemDistance": 75.0,
+                    "playerDistance": 400.0,
+                    "showChests": true,
+                    "showCrosshair": true,
+                    "showIfAiming": true,
+                    "showItems": true,
+                    "showKnocked": true,
+                    "showNotVisible": true,
+                    "showTeammates": false,
+                    "showVisible": true
+                }
+            };
+
+            document.getElementById("drawFieldOfView").checked = initialData.aimbot.drawFieldOfView;
+            document.getElementById("enablePrediction").checked = initialData.aimbot.enablePrediction;
+            document.getElementById("fieldOfView").value = initialData.aimbot.fieldOfView;
+            document.getElementById("humanization").checked = initialData.aimbot.humanization;
+            document.getElementById("ignoreBots").checked = initialData.aimbot.ignoreBots;
+            document.getElementById("ignoreKnocked").checked = initialData.aimbot.ignoreKnocked;
+            document.getElementById("keybind").value = initialData.aimbot.keybind;
+            document.getElementById("magic").checked = initialData.aimbot.magic;
+            document.getElementById("maxDistance").value = initialData.aimbot.maxDistance;
+            document.getElementById("showPredictionDot").checked = initialData.aimbot.showPredictionDot;
+            document.getElementById("smoothness").value = initialData.aimbot.smoothness;
+            document.getElementById("toggle").checked = initialData.aimbot.toggle;
+            document.getElementById("triggerKeybind").value = initialData.aimbot.triggerKeybind;
+            document.getElementById("triggerbot").checked = initialData.aimbot.triggerbot;
+            document.getElementById("visibleOnly").checked = initialData.aimbot.visibleOnly;
+
+            document.getElementById("exploitHitscan").checked = initialData.exploit.hitscan;
+
+            document.getElementById("chestDistance").value = initialData.visual.chestDistance;
+            document.getElementById("drawPlayerType").checked = initialData.visual.drawPlayerType;
+            document.getElementById("itemDistance").value = initialData.visual.itemDistance;
+            document.getElementById("playerDistance").value = initialData.visual.playerDistance;
+            document.getElementById("showChests").checked = initialData.visual.showChests;
+            document.getElementById("showCrosshair").checked = initialData.visual.showCrosshair;
+            document.getElementById("showIfAiming").checked = initialData.visual.showIfAiming;
+            document.getElementById("showItems").checked = initialData.visual.showItems;
+            document.getElementById("showKnocked").checked = initialData.visual.showKnocked;
+            document.getElementById("showNotVisible").checked = initialData.visual.showNotVisible;
+            document.getElementById("showTeammates").checked = initialData.visual.showTeammates;
+            document.getElementById("showVisible").checked = initialData.visual.showVisible;
+
+            updateJSON();
+        }
+    </script>
+
+</body>
+
+</html>

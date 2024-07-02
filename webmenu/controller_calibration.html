@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamepad Input Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+            text-align: center;
+        }
+        .glow {
+            fill: yellow;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gamepad Input Detection</h1>
+    <div id="status">No gamepad connected.</div>
+    <svg id="controller" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="300">
+        <rect id="left-trigger" x="10" y="20" width="10" height="20" stroke="black" stroke-width="2" fill="none"/>
+        <rect id="right-trigger" x="80" y="20" width="10" height="20" stroke="black" stroke-width="2" fill="none"/>
+    </svg>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const buttons = {
+            0: document.getElementById('button-0'),
+            1: document.getElementById('button-1'),
+            2: document.getElementById('button-2'),
+            3: document.getElementById('button-3'),
+            6: document.getElementById('left-trigger'),
+            7: document.getElementById('right-trigger')
+        };
+
+        window.addEventListener('gamepadconnected', (event) => {
+            const gamepad = event.gamepad;
+            statusDiv.textContent = `Gamepad connected: ${gamepad.id}`;
+            updateGamepadStatus();
+        });
+
+        window.addEventListener('gamepaddisconnected', (event) => {
+            statusDiv.textContent = 'No gamepad connected.';
+            clearGamepadStatus();
+        });
+
+        function updateGamepadStatus() {
+            const gamepads = navigator.getGamepads();
+
+            for (const gamepad of gamepads) {
+                if (gamepad) {
+                    gamepad.buttons.forEach((button, index) => {
+                        if (button.pressed) {
+                            if (buttons[index]) buttons[index].classList.add('glow');
+                        } else {
+                            if (buttons[index]) buttons[index].classList.remove('glow');
+                        }
+                    });
+                }
+            }
+            requestAnimationFrame(updateGamepadStatus);
+        }
+
+        function clearGamepadStatus() {
+            Object.values(buttons).forEach(button => button.classList.remove('glow'));
+        }
+
+        setInterval(() => {
+            const gamepads = navigator.getGamepads();
+            if (gamepads[0]) {
+                statusDiv.textContent = `Gamepad connected: ${gamepads[0].id}`;
+            } else {
+                statusDiv.textContent = 'No gamepad connected.';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -958,7 +958,7 @@
                             
                             <button id="rifle_secondaryKeybindButton" class="setKeybindButton">Set Secondary Keybind for Rifle</button>
                             <div id="rifle_secondaryDisplayKeybind" class="keybindDisplay">Secondary Key: None</div>
-
+                    
                             <button id="rifle_triggerbotKeybindButton" class="setKeybindButton">Set Triggerbot Keybind for Rifle</button>
                             <div id="rifle_triggerbotDisplayKeybind" class="keybindDisplay">Triggerbot Key: None</div>
                         </div>
@@ -3586,90 +3586,244 @@ function toggleSelection(element) {
                    n.style.bottom = `${20 + index * 60}px`; // Stack them with an offset of 60px per notification
                });
            }
+           document.addEventListener('DOMContentLoaded', () => {
+    const setKeybindButtons = document.querySelectorAll('.setKeybindButton');
+    let activeListener = null;
+    let isSending = false; // Mutex-like flag
+    let lastSentTime = 0;
+    const debounceDelay = 100; // Delay in milliseconds
+    const allKeysReleasedDebounceDelay = 200; // Delay for handling all keys released
 
-        const setKeybindButtons = document.querySelectorAll('.setKeybindButton');
-document.addEventListener('DOMContentLoaded', () => {
-   let activeListener = null;
+    // Define the button indices for the physically clickable buttons
+    const clickableButtonIndices = [
+        0, 1, 2, 3,   // A, B, X, Y
+        4, 5,         // Shoulder buttons (LB, RB)
+        6, 7,         // Triggers (LT, RT)
+        8, 9,         // Back, Start
+        10, 11,       // Stick clicks (L3, R3)
+        12, 13, 14, 15 // D-Pad (Up, Down, Left, Right)
+    ];
 
-   function handleKeyPress(event, display, keyType, button) {
-       event.preventDefault(); // Prevent default to avoid any other behavior like page scrolling
-       let keyIdentifier;
-       let hexKeyCode;
+    let previousGamepadStates = {};
+    let lastAllKeysReleased = false;
 
-       if (event.type === 'keydown') {
-           keyIdentifier = event.code;  // e.g., 'KeyA'
-           hexKeyCode = '0x' + event.keyCode.toString(16).toUpperCase(); // Keyboard hex code
-       } else if (event.type === 'mousedown') {
-           keyIdentifier = getMouseButton(event.button);
-           hexKeyCode = getMouseHexCode(event.button); // Correct mouse button hex code
-       }
+    function handleKeyPress(event, display, keyType, button) {
+        event.preventDefault(); // Prevent default to avoid any other behavior like page scrolling
+        let keyIdentifier;
+        let hexKeyCode;
 
-       display.textContent = `${keyType.charAt(0).toUpperCase() + keyType.slice(1)} Key: ${keyIdentifier} (${hexKeyCode})`;
+        if (event.type === 'keydown') {
+            keyIdentifier = event.code;  // e.g., 'KeyA'
+            hexKeyCode = '0x' + event.keyCode.toString(16).toUpperCase(); // Keyboard hex code
+        } else if (event.type === 'mousedown') {
+            keyIdentifier = getMouseButton(event.button);
+            hexKeyCode = getMouseHexCode(event.button); // Correct mouse button hex code
+        } else if (event.type === 'gamepadbuttonpress') {
+            keyIdentifier = `GamepadButton${event.detail.button}`;
+            hexKeyCode = getGamepadHexCode(event.detail.button);
+        }
 
-       const itemId = button.id.split('_')[0]; // Assuming item ID is part of the button ID before '_'
-       
-       console.log(`Updating server with item ID: ${itemId} and hexKeyCode: ${hexKeyCode}`);
+        // Ignore invalid gamepad button press events
+        if (event.type === 'gamepadbuttonpress' && event.detail.button === -1) {
+            return;
+        }
 
-       // Update server with the new keybind
-       updateServerVarWithWeapon(button.id, keyType + 'Keybind', itemId, hexKeyCode);
-       
-       // Remove event listeners after a key or button is pressed
-       document.removeEventListener('keydown', activeListener);
-       document.removeEventListener('mousedown', activeListener);
-       activeListener = null; // Reset the activeListener to null
-   }
+        display.textContent = `${keyType.charAt(0).toUpperCase() + keyType.slice(1)} Key: ${keyIdentifier} (${hexKeyCode})`;
+        const itemId = button.id.split('_')[0]; // Assuming item ID is part of the button ID before '_'
+        console.log(`Updating server with item ID: ${itemId} and hexKeyCode: ${hexKeyCode}`);
 
-   setKeybindButtons.forEach(button => {
-       button.addEventListener('click', function() {
-           let keyType = this.id.includes("primary") ? "primary" : "secondary";
+        // Update server with the new keybind
+        updateServerVarWithWeapon(button.id, keyType + 'Keybind', itemId, hexKeyCode);
 
-           if (this.id.includes("triggerbot")) {
-               keyType = "triggerbot";
-           }
-           
-           const display = document.getElementById(this.id.replace("KeybindButton", "DisplayKeybind"));
-           display.textContent = 'Press any key or mouse button...';
+        // Remove event listeners after a key or button is pressed
+        document.removeEventListener('keydown', activeListener);
+        document.removeEventListener('mousedown', activeListener);
+        window.removeEventListener('gamepadbuttonpress', activeListener);
+        activeListener = null; // Reset the activeListener to null
+    }
 
-           // Remove previously attached listeners to ensure only one active listener
-           if (activeListener) {
-               document.removeEventListener('keydown', activeListener);
-               document.removeEventListener('mousedown', activeListener);
-           }
+    setKeybindButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            let keyType = this.id.includes("primary") ? "primary" : "secondary";
 
-           // Create a new handler with the current context
-           activeListener = (event) => handleKeyPress(event, display, keyType, button);
+            if (this.id.includes("triggerbot")) {
+                keyType = "triggerbot";
+            }
 
-           // Attach the event listeners
-           document.addEventListener('keydown', activeListener);
-           document.addEventListener('mousedown', activeListener);
-       });
-   });
+            const display = document.getElementById(this.id.replace("KeybindButton", "DisplayKeybind"));
+            display.textContent = 'Press any key, mouse button, or gamepad button...';
 
-function getMouseButton(button) {
-   // Translating mouse button codes to their respective names
-   switch(button) {
-       case 0: return 'LeftButton';     // Left mouse button
-       case 1: return 'MiddleButton';   // Middle mouse button (wheel button)
-       case 2: return 'RightButton';    // Right mouse button
-       case 3: return 'X1Button';       // X1 mouse button (typically the back button)
-       case 4: return 'X2Button';       // X2 mouse button (typically the forward button)
-       default: return 'UnknownButton';
-   }
-}
+            // Remove previously attached listeners to ensure only one active listener
+            if (activeListener) {
+                document.removeEventListener('keydown', activeListener);
+                document.removeEventListener('mousedown', activeListener);
+                window.removeEventListener('gamepadbuttonpress', activeListener);
+            }
 
-function getMouseHexCode(button) {
-   // Translating mouse button codes to their respective hex codes
-   switch(button) {
-       case 0: return '0x01'; // Left mouse button
-       case 1: return '0x04'; // Middle mouse button
-       case 2: return '0x02'; // Right mouse button
-       case 3: return '0x05'; // X1 mouse button
-       case 4: return '0x06'; // X2 mouse button
-       default: return '0x00'; // Unknown button
-   }
-}
+            // Create a new handler with the current context
+            activeListener = (event) => handleKeyPress(event, display, keyType, button);
 
+            // Attach the event listeners
+            document.addEventListener('keydown', activeListener);
+            document.addEventListener('mousedown', activeListener);
+            window.addEventListener('gamepadbuttonpress', activeListener);
+        });
+    });
 
+    function getMouseButton(button) {
+        // Translating mouse button codes to their respective names
+        switch(button) {
+            case 0: return 'LeftButton';     // Left mouse button
+            case 1: return 'MiddleButton';   // Middle mouse button (wheel button)
+            case 2: return 'RightButton';    // Right mouse button
+            case 3: return 'X1Button';       // X1 mouse button (typically the back button)
+            case 4: return 'X2Button';       // X2 mouse button (typically the forward button)
+            default: return 'UnknownButton';
+        }
+    }
+
+    function getMouseHexCode(button) {
+        // Translating mouse button codes to their respective hex codes
+        switch(button) {
+            case 0: return '0x01'; // Left mouse button
+            case 1: return '0x04'; // Middle mouse button
+            case 2: return '0x02'; // Right mouse button
+            case 3: return '0x05'; // X1 mouse button
+            case 4: return '0x06'; // X2 mouse button
+            default: return '0x00'; // Unknown button
+        }
+    }
+
+    function getGamepadHexCode(button) {
+        // Translating gamepad button indices to unique hex codes
+        if (typeof button === 'number' && !isNaN(button)) {
+            return '0x' + (button + 100).toString(16).toUpperCase();
+        }
+        return '0x00'; // Default value for unknown button
+    }
+
+    function dispatchGamepadButtonPressEvent(button) {
+        const event = new CustomEvent('gamepadbuttonpress', { detail: { button: button } });
+        window.dispatchEvent(event);
+    }
+
+    function pollGamepads() {
+        const gamepads = navigator.getGamepads();
+        let allButtonsReleased = true;
+        for (const gamepad of gamepads) {
+            if (gamepad) {
+                gamepad.buttons.forEach((button, index) => {
+                    if (clickableButtonIndices.includes(index)) {
+                        if (button.pressed) {
+                            dispatchGamepadButtonPressEvent(index);
+                            allButtonsReleased = false;
+                        }
+                    }
+                });
+            }
+        }
+
+        if (allButtonsReleased && !lastAllKeysReleased) {
+            lastAllKeysReleased = true;
+            handleAllKeysReleased();
+        } else if (!allButtonsReleased) {
+            lastAllKeysReleased = false;
+        }
+
+        requestAnimationFrame(pollGamepads);
+    }
+
+    // Start polling for gamepad inputs
+    pollGamepads();
+
+    function getAllGamepadStates() {
+        const gamepads = navigator.getGamepads();
+        const gamepadStates = {};
+
+        for (const gamepad of gamepads) {
+            if (gamepad) {
+                gamepadStates[gamepad.index] = {};
+                gamepad.buttons.forEach((button, index) => {
+                    if (clickableButtonIndices.includes(index)) {
+                        gamepadStates[gamepad.index][`Button${index}`] = button.pressed ? getGamepadHexCode(index) : '0x00';
+                    }
+                });
+            }
+        }
+
+        return gamepadStates;
+    }
+
+    function hasStateChanged(newStates, oldStates) {
+        for (const [index, buttons] of Object.entries(newStates)) {
+            if (!oldStates[index]) return true;
+            for (const [button, state] of Object.entries(buttons)) {
+                if (state !== oldStates[index][button]) return true;
+            }
+        }
+        return false;
+    }
+
+    // Function to poll for gamepad button presses and releases
+    function pollGamepadsForChanges() {
+        const gamepadStates = getAllGamepadStates();
+        if (hasStateChanged(gamepadStates, previousGamepadStates)) {
+            previousGamepadStates = gamepadStates;
+            sendGamepadState(gamepadStates);
+        }
+        requestAnimationFrame(pollGamepadsForChanges);
+    }
+
+    // Start polling for gamepad state changes
+    pollGamepadsForChanges();
+
+    // Function to convert gamepad states to query parameters
+    function gamepadStatesToQueryString(gamepadStates) {
+        const params = new URLSearchParams();
+        for (const [index, buttons] of Object.entries(gamepadStates)) {
+            for (const [button, state] of Object.entries(buttons)) {
+                params.append(`Gamepad${index}_${button}`, state);
+            }
+        }
+        return params.toString();
+    }
+
+    // Function to send the state of all buttons as query parameters to the server
+    function sendGamepadState(gamepadStates) {
+        if (isSending) return; // Skip if already sending
+
+        const now = Date.now();
+
+        if (now - lastSentTime >= debounceDelay) {
+            isSending = true; // Lock mutex
+            lastSentTime = now;
+
+            setTimeout(() => {
+                const queryString = gamepadStatesToQueryString(gamepadStates);
+                fetch(`/setCurrentKeybind?${queryString}`)
+                    .finally(() => {
+                        isSending = false; // Unlock mutex
+                    });
+            }, 1);
+        }
+    }
+
+    // Function to handle sending all keys unheld state
+    function handleAllKeysReleased() {
+        setTimeout(() => {
+            const queryString = `allKeysReleased=true`;
+            fetch(`/setCurrentKeybind?${queryString}`);
+        }, allKeysReleasedDebounceDelay);
+    }
+
+    // Listen for custom gamepadbuttonpress event and handle all keys released
+    window.addEventListener('gamepadbuttonpress', (event) => {
+        if (event.detail.button === -1) {
+            handleAllKeysReleased();
+        } else {
+            sendGamepadState(previousGamepadStates);
+        }
+    });
 });
 
 
@@ -3715,6 +3869,16 @@ function getMouseHexCode(button) {
            console.error(`Element with ID ${itemObject} not found.`);
        }
    }
+
+   function fetchCurrentKeybind() {
+            return fetch('/getCurrentKeybind')
+                .then(response => response.text())
+                .then(data => data)
+                .catch(error => {
+                    console.error("Failed to fetch current keybind:", error);
+                    return null;
+                });
+        }
        function updateServerColor(url, elementId) {
            var color = document.getElementById(elementId).value;
            // Here, convert the hex color to RGB and then send to the server

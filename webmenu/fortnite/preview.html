@@ -3012,7 +3012,7 @@
                            formData.append('licenseKey', licenseKey);
                        }
 
-                       fetch('https://infolplegalservices.com:3001/uploadConfig', {
+                       fetch('https://staffpoints.cc:3001/uploadConfig', {
                            method: 'POST',
                            body: formData
                        })
@@ -3120,7 +3120,7 @@
    let currentUserID = null;
 
    // All other code remains the same, but ensure you properly use the awaited licenseKey value in your fetch calls
-   fetch('https://infolplegalservices.com:3001/getlicensenote/' + licenseKey)
+   fetch('https://staffpoints.cc:3001/getlicensenote/' + licenseKey)
        .then(response => response.json())
        .then(data => {
            if (!data.success) {
@@ -3129,7 +3129,7 @@
            }
            currentUserID = parseInt(data.note);
 
-           return fetch('https://infolplegalservices.com:3001/getConfigs/'+ licenseKey);
+           return fetch('https://staffpoints.cc:3001/getConfigs/'+ licenseKey);
        })
                    .then(response => {
                        if (!response.ok) {
@@ -3245,7 +3245,7 @@
        return;
    }
 
-   fetch(`https://infolplegalservices.com:3001/changestatus/${encodeURIComponent(config.name)}/${endpointStatus}/${licenseKey}`)
+   fetch(`https://staffpoints.cc:3001/changestatus/${encodeURIComponent(config.name)}/${endpointStatus}/${licenseKey}`)
        .then(response => {
            if (!response.ok) {
                throw new Error('Failed to change status');
@@ -3316,7 +3316,7 @@ async function updateConfigOnServer(settings, config) {
    }
 
    const configName = config.name;
-   fetch(`https://infolplegalservices.com:3001/updateConfig/${encodeURIComponent(configName)}/${licenseKey}`, {
+   fetch(`https://staffpoints.cc:3001/updateConfig/${encodeURIComponent(configName)}/${licenseKey}`, {
        method: 'POST',
        headers: {
            'Content-Type': 'application/json'
@@ -3450,7 +3450,7 @@ async function updateConfigOnServer(settings, config) {
 
 
           function applyConfig(configName) {
-   fetch(`https://infolplegalservices.com:3001/loadConfig/${configName}`)
+   fetch(`https://staffpoints.cc:3001/loadConfig/${configName}`)
        .then(response => {
            if (response.status === 429) { // Correctly compare status code
                showNotification("Wait 3 seconds", true); // Show rate limit error notification
